@@ -58,7 +58,9 @@ export default function OilCalculator() {
   const handleIngredientChange = (index: number, field: keyof Ingredient, value: string) => {
     const newIngredients = [...ingredients]
     if (field === "percentage") {
-      newIngredients[index][field] = Number.parseFloat(value) || 0
+      // Convert to number to remove leading zeros (e.g., "0045" becomes 45)
+      const numericValue = value === "" ? 0 : Number.parseInt(value, 10)
+      newIngredients[index][field] = numericValue
     } else {
       newIngredients[index][field] = value as string
     }
@@ -262,7 +264,9 @@ export default function OilCalculator() {
           />
         </div>
         <CardHeader>
-          <CardTitle>מחשבון המתכונים של אור המדבר</CardTitle>
+          <CardTitle className="font-calibri-light text-center text-4xl font-light">
+            מחשבון המתכונים של אור המדבר
+          </CardTitle>
           <CardDescription>חישוב כמויות מדויקות למתכונים באחוזים</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -338,6 +342,7 @@ export default function OilCalculator() {
                         max="100"
                         value={ingredient.percentage}
                         onChange={(e) => handleIngredientChange(index, "percentage", e.target.value)}
+                        onFocus={(e) => e.target.select()}
                       />
                       <span className="mr-1">%</span>
                     </div>
@@ -358,12 +363,12 @@ export default function OilCalculator() {
           <div className="pt-4 border-t">
             <div className="flex justify-between items-center mb-3">
               <h3 className="text-lg font-medium">תוצאות</h3>
-              <div className="flex gap-2">
+              <div className="flex flex-col sm:flex-row gap-2">
                 <Button
                   variant="outline"
                   onClick={printRecipe}
                   disabled={totalPercentage !== 100 || ingredients.length === 0}
-                  className="flex items-center"
+                  className="flex items-center justify-center"
                 >
                   <Printer className="h-4 w-4 ml-2" />
                   הדפס
@@ -372,7 +377,7 @@ export default function OilCalculator() {
                   variant="outline"
                   onClick={downloadPDF}
                   disabled={totalPercentage !== 100 || ingredients.length === 0}
-                  className="flex items-center"
+                  className="flex items-center justify-center"
                 >
                   <Download className="h-4 w-4 ml-2" />
                   הורד PDF
